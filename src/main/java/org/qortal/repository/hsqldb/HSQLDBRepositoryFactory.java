@@ -4,8 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hsqldb.HsqlException;
 import org.hsqldb.error.ErrorCode;
-import org.hsqldb.jdbc.HSQLDBPool;
-import org.hsqldb.jdbc.HSQLDBPoolMonitored;
+import org.hsqldb.jdbc.JDBCPool;
 import org.qortal.data.system.DbConnectionInfo;
 import org.qortal.repository.DataException;
 import org.qortal.repository.Repository;
@@ -28,7 +27,7 @@ public class HSQLDBRepositoryFactory implements RepositoryFactory {
 	private static final long SLOW_CONNECTION_THRESHOLD = 1000L;
 
 	private String connectionUrl;
-	private HSQLDBPool connectionPool;
+	private JDBCPool connectionPool;
 	private final boolean wasPristine;
 
 	/**
@@ -62,10 +61,15 @@ public class HSQLDBRepositoryFactory implements RepositoryFactory {
 		}
 
 		if(Settings.getInstance().isConnectionPoolMonitorEnabled()) {
-			this.connectionPool = new HSQLDBPoolMonitored(Settings.getInstance().getRepositoryConnectionPoolSize());
+			throw new DataException("Class HSQLDBPoolMonitor has been removed, please update your settings.json");
 		}
 		else {
-			this.connectionPool = new HSQLDBPool(Settings.getInstance().getRepositoryConnectionPoolSize());
+			this.connectionPool = new JDBCPool(Settings.getInstance().getRepositoryConnectionPoolSize());
+			try {
+				this.connectionPool.setLoginTimeout(7);  // Limit Blocking to 7 seconds
+			} catch (SQLException e) {
+				throw new DataException("Unable to Connect to Database");
+			}
 		}
 
 		this.connectionPool.setUrl(this.connectionUrl);
@@ -128,7 +132,7 @@ public class HSQLDBRepositoryFactory implements RepositoryFactory {
 	}
 
 	private Connection tryConnection() throws SQLException {
-		Connection connection = this.connectionPool.tryConnection();
+		Connection connection = this.connectionPool.getConnection();
 		if (connection == null)
 			return null;
 
@@ -171,11 +175,6 @@ public class HSQLDBRepositoryFactory implements RepositoryFactory {
 	 * @return the connection states if enabled, otherwise an empty list
 	 */
 	public List<DbConnectionInfo> getDbConnectionsStates() {
-		if( Settings.getInstance().isConnectionPoolMonitorEnabled() ) {
-			return ((HSQLDBPoolMonitored) this.connectionPool).getDbConnectionsStates();
-		}
-		else {
-			return new ArrayList<>(0);
-		}
+		return new ArrayList<>(0);
 	}
 }

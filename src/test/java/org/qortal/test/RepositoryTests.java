@@ -109,6 +109,8 @@ public class RepositoryTests extends Common {
 
 	@Test
 	public void testUpdateReadDeadlock() {
+
+		System.out.printf("Running testUpdateReadDeadlock%n");
 		// Open connection 1
 		try (final Repository repository1 = RepositoryManager.getRepository()) {
 			// Mint blocks so we have data (online account signatures) to work with
@@ -311,8 +313,12 @@ public class RepositoryTests extends Common {
 			final HSQLDBRepository hsqldb = (HSQLDBRepository) repository;
 			hsqldb.prepareStatement("SET DATABASE TRANSACTION ROLLBACK ON INTERRUPT TRUE").execute();
 
+			System.out.printf("Set Rollback on Interrupt = true%n");
+
 			// Create SQL procedure that calls hsqldbSleep() to block HSQLDB so we can interrupt()
 			hsqldb.prepareStatement("CREATE PROCEDURE sleep(IN millis INT) LANGUAGE JAVA DETERMINISTIC NO SQL EXTERNAL NAME 'CLASSPATH:org.qortal.test.RepositoryTests.hsqldbSleep'").execute();
+
+			System.out.printf("Stored Procedure Successfully Created%n");
 
 			// Execute long-running statement
 			hsqldb.prepareStatement("CALL sleep(2000)").execute();

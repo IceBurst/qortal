@@ -54,6 +54,7 @@
 		<replacer.version>1.5.3</replacer.version>
 		<simplemagic.version>1.17</simplemagic.version>
 		<slf4j.version>1.7.36</slf4j.version>
+		<sure-fire-plugin.version>2.22.2</sure-fire-plugin.version>
 		<swagger-api.version>2.0.10</swagger-api.version>
 		<swagger-ui.version>5.18.2</swagger-ui.version>
 		<upnp.version>1.2</upnp.version>
@@ -289,19 +290,23 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>${maven-jar-plugin.version}</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addDefaultEntries>false</addDefaultEntries>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-						<manifestEntries>
-							<Last-Commit-Id>${git.commit.id.full}</Last-Commit-Id>
-							<Last-Commit-Time>${git.commit.time}</Last-Commit-Time>
-							<Reproducible-Build>true</Reproducible-Build>
-						</manifestEntries>
-					</archive>
-				</configuration>
+				<executions>
+					<execution>
+						<configuration>
+							<archive>
+								<manifest>
+									<addDefaultEntries>false</addDefaultEntries>
+									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+								</manifest>
+								<manifestEntries>
+									<Last-Commit-Id>${git.commit.id.full}</Last-Commit-Id>
+									<Last-Commit-Time>${git.commit.time}</Last-Commit-Time>
+									<Reproducible-Build>true</Reproducible-Build>
+								</manifestEntries>
+							</archive>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -416,6 +421,14 @@
 								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${sure-fire-plugin.version}</version>
+					<configuration>
+						<argLine>-Dhsqldb.method_class_names="org.qortal.test.*" -ea</argLine>
 					</configuration>
 				</plugin>
 			</plugins>
