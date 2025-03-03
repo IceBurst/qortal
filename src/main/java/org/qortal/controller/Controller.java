@@ -79,6 +79,7 @@ public class Controller extends Thread {
 		// This must go before any calls to LogManager/Logger
 		System.setProperty("log4j2.formatMsgNoLookups", "true");
 		System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
+		System.setProperty("hsqldb.method_class_names", "org.qortal.repository.hsqldb.*");
 	}
 
 	/** Controller start-up time (ms) taken using <tt>System.currentTimeMillis()</tt>. */
