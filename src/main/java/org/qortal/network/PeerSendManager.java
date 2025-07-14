@@ -14,7 +14,7 @@ public class PeerSendManager {
     private static final Logger LOGGER = LogManager.getLogger(PeerSendManager.class);
 
     private static final int MAX_FAILURES = 5; // was 15
-    private static final int MAX_MESSAGE_ATTEMPTS = 2; // was 2
+    private static final int MAX_MESSAGE_ATTEMPTS = 2; 
     private static final int RETRY_DELAY_MS = 100;
     private static final long COOLDOWN_DURATION_MS = 1_000; // was 20K
 
@@ -165,6 +165,7 @@ public class PeerSendManager {
         });
     }
 
+
     /**
      * Queues a message to be sent to the associated peer with the default priority ({@code NO_PRIORITY}).
      *
@@ -251,6 +252,8 @@ public class PeerSendManager {
                 queue.offer(allMessages[i]);
             }
         }
+
+        return true;
     }
 
     /**

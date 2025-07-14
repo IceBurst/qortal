@@ -745,6 +745,11 @@ public class Peer {
      * @return <code>true</code> if message successfully sent; <code>false</code> otherwise
      */
     public boolean sendMessageWithTimeout(Message message, int timeout) {
+
+        return PeerSendManagement.getInstance().getOrCreateSendManager(this).queueMessage(message, timeout);
+    }
+
+    public boolean sendMessageWithTimeoutNow(Message message, int timeout) {
         if (!this.socketChannel.isOpen()) {
             LOGGER.debug("SocketChannel was not open; returning false");
             return false;
